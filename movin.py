@@ -2,13 +2,16 @@
 import xlrd
 import sqlite3
 conn = sqlite3.connect('inventory.db')
-# Give ./)
-loc = ('inv.xlsx')
+# file to parse
+file = ('inv.xlsx')
+loc = file
+
+
+
 # To open Workbook
 wb = xlrd.open_workbook(loc)
+#declaring which index of the sheet is read IE the bottom info
 sheet = wb.sheet_by_index(5)
-invArr = []
-
 
 class Inv:
     def __init__(self, equip, asset, serial, manu, model, fname, lname, supplier, ponum):
@@ -41,9 +44,10 @@ c.execute('''CREATE TABLE inventory
 counter = 0
 for i in range(sheet.nrows):
     counter += 1
+    # easy work around for replacing extra chars in the data
     firstName = sheet.cell_value(i, 5).replace("'", '')
     lastName = sheet.cell_value(i, 6).replace("'", '')
-
+# creating the Inventory class object
     ok = Inv(sheet.cell_value(i, 0),
              sheet.cell_value(i, 1), 
              sheet.cell_value(i, 2), 
@@ -54,6 +58,7 @@ for i in range(sheet.nrows):
              sheet.cell_value(i, 7), 
              sheet.cell_value(i, 8))
     # c.execute(f"INSERT INTO inventory VALUES ('{ok.equip}', '{ok.asset}', '{ok.serial}', '{ok.manu}', '{ok.model}', '{ok.fname}', '{ok.lname}', '{ok.supplier}', '{ok.ponum}')")
+    # executing the class object in the loop , setting the value to match the feilds and then send objs to the DB 
     c.execute(f"INSERT INTO inventory VALUES ('{ok.equip}', '{ok.asset}', '{ok.serial}', '{ok.manu}', '{ok.model}', '{ok.fname}', '{ok.lname}', '{ok.supplier}', '{ok.ponum}')")
 
     # c.execute(f"INSERT INTO stocks VALUES ('2006-01-{counter}','BUY{counter}','RHAT{counter}',100,{counter}.14)")
